@@ -1,0 +1,66 @@
+
+-- 1. Create the database
+CREATE DATABASE IF NOT EXISTS compassion_project;
+
+-- 2. Select the database
+USE compassion_project;
+
+-- 3. Create the students table
+CREATE TABLE IF NOT EXISTS students (
+    student_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_code VARCHAR(20) UNIQUE NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    gender ENUM('Male', 'Female', 'Other') NOT NULL,
+    date_of_birth DATE,
+    class_name VARCHAR(30),
+    phone VARCHAR(20),
+    guardian_name VARCHAR(100),
+    guardian_phone VARCHAR(20),
+    address VARCHAR(255),
+    enrollment_date DATE DEFAULT (CURRENT_DATE),
+    status ENUM('Active', 'Inactive', 'Graduated')
+        DEFAULT 'Active'
+);
+
+-- 4. Create attendance table
+CREATE TABLE IF NOT EXISTS attendance (
+    attendance_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    attendance_date DATE NOT NULL,
+    attendance_status ENUM('Present', 'Absent', 'Late')
+        NOT NULL,
+    remarks VARCHAR(255),
+    FOREIGN KEY (student_id)
+        REFERENCES students(student_id),
+    UNIQUE (student_id, attendance_date)
+);
+
+-- 5. Create academic performance table
+CREATE TABLE IF NOT EXISTS academic_results (
+    result_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    subject_name VARCHAR(100) NOT NULL,
+    term VARCHAR(30) NOT NULL,
+    academic_year YEAR NOT NULL,
+    marks DECIMAL(5,2) NOT NULL,
+    FOREIGN KEY (student_id)
+        REFERENCES students(student_id),
+    CHECK (marks >= 0 AND marks <= 100)
+);
+
+-- 6. Create a table for student support
+CREATE TABLE IF NOT EXISTS student_support (
+    support_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    support_type VARCHAR(100) NOT NULL,
+    support_description TEXT,
+    support_date DATE NOT NULL,
+    support_status ENUM('Pending', 'Provided', 'Cancelled')
+        DEFAULT 'Pending',
+    FOREIGN KEY (student_id)
+        REFERENCES students(student_id)
+);
+
+-- 7. Check the created tables
+SHOW TABLES;

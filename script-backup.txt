@@ -1,0 +1,400 @@
+```js
+const express = require("express");
+const mysql = require("mysql2/promise");
+const bcrypt = require("bcrypt");
+const session = require("express-session");
+const path = require("path");
+
+require("dotenv").config({
+    path: path.join(__dirname, ".env")
+});
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+const websiteFolder = path.join(__dirname, "..");
+
+// MIDDLEWARE
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use(
+    session({
+        secret:
+            process.env.SESSION_SECRET ||
+            "soundwave-local-development-secret",
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: false,
+            maxAge: 2 * 60 * 60 * 1000
+        }
+    })
+);
+
+// DATABASE
+const db = mysql.createPool({
+    host: process.env.DB_HOST || "localhost",
+    port: Number(process.env.DB_PORT || 3306),
+    user: process.env.DB_USER || "root",
+    password: process.env.DB_PASSWORD || "",
+    database: process.env.DB_NAME || "soundwave_db",
+    waitForConnections: true,
+    connectionLimit: 10
+});
+
+// WEBSITE FILES
+app.use(express.static(websiteFolder));
+
+app.get("/", (req, res) => {
+    res.sendFile(path.join(websiteFolder, "index.html"));
+});
+
+// DATABASE TEST
+app.get("/api/db-test", async (req, res) => {
+    try {
+        await db.query("SELECT 1");
+
+        res.json({
+            success: true,
+            message: "Database connected successfully!"
+        });
+    } catch (error) {
+        console.error("Database test error:", error.message);
+
+        res.status(500).json({
+            success: false,
+            message: "Database connection failed."
+        });
+    }
+});
+
+// REGISTER
+app.post("/api/register", async (req, res) => {
+    try {
+        const { fullName, email, password } = req.body || {};
+
+        if (
+            typeof fullName !== "string" ||
+            typeof email !== "string" ||
+            typeof password !== "string" ||
+            !fullName.trim() ||
+            !email.trim() ||
+            !password
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Please fill in all required fields."
+            });
+        }
+
+        const cleanName = fullName.trim();
+        const cleanEmail = email.trim().toLowerCase();
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailPattern.test(cleanEmail)) {
+            return res.status(400).json({
+                success: false,
+                message: "Please enter a valid email address."
+            });
+        }
+
+        if (cleanName.length > 100 || cleanEmail.length > 255) {
+            return res.status(400).json({
+                success: false,
+                message: "Name or email is too long."
+            });
+        }
+
+        if (password.length < 8) {
+            return res.status(400).json({
+                success: false,
+                message: "Password must contain at least 8 characters."
+            });
+        }
+
+        const [existing] = await db.execute(
+            "SELECT id FROM users WHERE email = ? LIMIT 1",
+            [cleanEmail]
+        );
+
+        if (existing.length > 0) {
+            return res.status(409).json({
+                success: false,
+                message: "This email already exists. Please log in."
+            });
+        }
+
+        const passwordHash = await bcrypt.hash(password, 12);
+
+        await db.execute(
+            "INSERT INTO users (full_name, email, password_hash) VALUES (?, ?, ?)",
+            [cleanName, cleanEmail, passwordHash]
+        );
+
+        return res.status(201).json({
+            success: true,
+            message: "Account created successfully!",
+            redirect: "/login.html"
+        });
+    } catch (error) {
+        console.error("Registration error:", error.message);
+
+        if (error.code === "ER_DUP_ENTRY") {
+            return res.status(409).json({
+                success: false,
+                message: "This email already exists. Please log in."
+            });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: "Registration failed. Please try again."
+        });
+    }
+});
+
+// LOGIN
+app.post("/api/login", async (req, res) => {
+    try {
+        const { email, password } = req.body || {};
+
+        if (
+            typeof email !== "string" ||
+            typeof password !== "string" ||
+            !email.trim() ||
+            !password
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Please enter your email and password."
+            });
+        }
+
+        const cleanEmail = email.trim().toLowerCase();
+
+        const [users] = await db.execute(
+            "SELECT id, full_name, email, password_hash FROM users WHERE email = ? LIMIT 1",
+            [cleanEmail]
+        );
+
+        if (users.length === 0) {
+            return res.status(401).json({
+                success: false,
+                message: "Incorrect email or password."
+            });
+        }
+
+        const user = users[0];
+        const passwordMatches = await bcrypt.compare(
+            password,
+            user.password_hash
+        );
+
+        if (!passwordMatches) {
+            return res.status(401).json({
+                success: false,
+                message: "Incorrect email or password."
+            });
+        }
+
+        req.session.regenerate((error) => {
+            if (error) {
+                console.error("Session error:", error.message);
+
+                return res.status(500).json({
+                    success: false,
+                    message: "Could not start your login session."
+                });
+            }
+
+            req.session.user = {
+                id: user.id,
+                fullName: user.full_name,
+                email: user.email
+            };
+
+            req.session.save((saveError) => {
+                if (saveError) {
+                    console.error("Session save error:", saveError.message);
+
+                    return res.status(500).json({
+                        success: false,
+                        message: "Could not save your login session."
+                    });
+                }
+
+                return res.json({
+                    success: true,
+                    message: "Login successful!",
+                    user: req.session.user,
+                    redirect: "/index.html"
+                });
+            });
+        });
+    } catch (error) {
+        console.error("Login error:", error.message);
+
+        return res.status(500).json({
+            success: false,
+            message: "A server error occurred during login."
+        });
+    }
+});
+
+// CURRENT USER
+app.get("/api/me", (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({
+            success: false,
+            message: "Please log in first."
+        });
+    }
+
+    return res.json({
+        success: true,
+        user: req.session.user
+    });
+});
+
+// LOGOUT
+app.post("/api/logout", (req, res) => {
+    req.session.destroy((error) => {
+        if (error) {
+            console.error("Logout error:", error.message);
+
+            return res.status(500).json({
+                success: false,
+                message: "Could not log out."
+            });
+        }
+
+        res.clearCookie("connect.sid");
+
+        return res.json({
+            success: true,
+            message: "Logged out successfully."
+        });
+    });
+});
+
+// YOUTUBE MUSIC SEARCH
+app.get("/api/youtube/search", async (req, res) => {
+    console.log("YouTube search route reached");
+
+    try {
+        const apiKey = process.env.YOUTUBE_API_KEY;
+
+        if (!apiKey) {
+            return res.status(500).json({
+                success: false,
+                message: "YouTube API key is not configured in backend/.env."
+            });
+        }
+
+        const query =
+            typeof req.query.q === "string"
+                ? req.query.q.trim()
+                : "";
+
+        if (!query) {
+            return res.status(400).json({
+                success: false,
+                message: "Please enter a song or artist name."
+            });
+        }
+
+        if (query.length > 150) {
+            return res.status(400).json({
+                success: false,
+                message: "Search query is too long."
+            });
+        }
+
+        const params = new URLSearchParams({
+            part: "snippet",
+            q: query + " music",
+            type: "video",
+            videoCategoryId: "10",
+            maxResults: "12",
+            safeSearch: "moderate",
+            key: apiKey
+        });
+
+        const youtubeUrl =
+            "https://www.googleapis.com/youtube/v3/search?" +
+            params.toString();
+
+        const response = await fetch(youtubeUrl);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+
+            console.error(
+                "YouTube API error:",
+                response.status,
+                errorText
+            );
+
+            return res.status(502).json({
+                success: false,
+                message:
+                    "YouTube search failed. Check the API key, API activation, and quota in Google Cloud."
+            });
+        }
+
+        const data = await response.json();
+
+        const videos = (data.items || [])
+            .filter((item) => item.id && item.id.videoId)
+            .map((item) => ({
+                videoId: item.id.videoId,
+                title: item.snippet.title,
+                channelTitle: item.snippet.channelTitle,
+                thumbnail:
+                    (item.snippet.thumbnails &&
+                        item.snippet.thumbnails.high &&
+                        item.snippet.thumbnails.high.url) ||
+                    (item.snippet.thumbnails &&
+                        item.snippet.thumbnails.medium &&
+                        item.snippet.thumbnails.medium.url) ||
+                    (item.snippet.thumbnails &&
+                        item.snippet.thumbnails.default &&
+                        item.snippet.thumbnails.default.url) ||
+                    "",
+                publishedAt: item.snippet.publishedAt,
+                url:
+                    "https://www.youtube.com/watch?v=" +
+                    item.id.videoId
+            }));
+
+        return res.json({
+            success: true,
+            query: query,
+            results: videos
+        });
+    } catch (error) {
+        console.error("YouTube search error:", error.message);
+
+        return res.status(500).json({
+            success: false,
+            message: "An error occurred while searching YouTube."
+        });
+    }
+});
+
+// UNKNOWN API ENDPOINT
+// This must stay AFTER all API routes.
+app.use("/api", (req, res) => {
+    return res.status(404).json({
+        success: false,
+        message: "API endpoint not found."
+    });
+});
+
+// SERVER
+app.listen(PORT, () => {
+    console.log("SoundWave server running at http://localhost:" + PORT);
+});
+```

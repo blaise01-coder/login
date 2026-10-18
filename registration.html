@@ -3,43 +3,411 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Create Account | SoundWave</title>
+
+    <!-- Google Identity Services SDK -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+            background: linear-gradient(135deg, #100b2d, #30206e, #7b2ff7);
+            color: #fff;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            padding: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 20px;
+            background: rgba(20, 15, 48, 0.92);
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.35);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 30px;
+            font-weight: bold;
+            color: #b99aff;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 25px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #c8c2df;
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #514578;
+            border-radius: 9px;
+            background: #211a40;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #a78bfa;
+            box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.15);
+        }
+
+        input::placeholder {
+            color: #aaa2c8;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 9px;
+            background: linear-gradient(90deg, #7c3aed, #a855f7);
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .submit-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message {
+            min-height: 20px;
+            margin-top: 15px;
+            font-size: 14px;
+            line-height: 1.5;
+            text-align: center;
+            overflow-wrap: anywhere;
+        }
+
+        /* Social Login Divider & Buttons */
+        .social-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 22px 0 18px;
+            color: #aaa2c8;
+            font-size: 13px;
+        }
+
+        .social-divider::before,
+        .social-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #514578;
+        }
+
+        .social-divider span {
+            padding: 0 10px;
+        }
+
+        .social-container {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px;
+            background: #211a40;
+            border: 1px solid #514578;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .social-btn:hover {
+            background: #2d2456;
+            border-color: #a78bfa;
+            transform: translateY(-1px);
+        }
+
+        .social-icon {
+            width: 18px;
+            height: 18px;
+        }
+
+        .login-link,
+        .home-link {
+            text-align: center;
+            margin-top: 18px;
+            font-size: 14px;
+        }
+
+        a {
+            color: #c4a7ff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .home-link {
+            margin-top: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <div class="container">
-        <div class="fast">
-            <label for="fastname">fast name</label>
-            <input type="fast" name="fast" id="fast" required>
+    <main class="container">
+        <div class="logo">♫ SoundWave</div>
 
-        </div>
-        <div class="last">
-            <label for="last name">last name</label>
-            <input type="last" name="last" id="lastname" required>
+        <h1>Create Account</h1>
+        <p class="subtitle">Join SoundWave and enjoy your music.</p>
 
-        </div>
-        <div class="email">
-            <label for="email">Email</label>
-            <input type="email" name="email" id="email" required>
+        <form id="registration-form">
+            <div class="form-group">
+                <label for="fullname">Full Name</label>
+                <input
+                    type="text"
+                    id="fullname"
+                    name="fullname"
+                    placeholder="Enter your full name"
+                    maxlength="100"
+                    autocomplete="name"
+                    required
+                >
+            </div>
 
-        </div>
-        <div class="username2">
-        <label for="username">username</label>
-        <input type="user " name="user" id="user" required>
-        </div>
-        <label class="gender">Gender:</label>
-        <div class="male">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    maxlength="255"
+                    autocomplete="email"
+                    required
+                >
+            </div>
 
-<input type="radio" id="male" name="gender" value="Male">
-<label for="male">Male</label>
-</div>
-<dir class="female">
-<input type="radio" id="female" name="gender" value="Female">
-<label for="female">Female</label>
-</dir> 
-<div class="register">
-<input type="button" value="register" id="register">
-    </div>
-    
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="At least 8 characters"
+                    minlength="8"
+                    autocomplete="new-password"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input
+                    type="password"
+                    id="confirm-password"
+                    name="confirm-password"
+                    placeholder="Enter your password again"
+                    minlength="8"
+                    autocomplete="new-password"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="submit-btn">
+                Create Account
+            </button>
+
+            <p
+                id="registration-message"
+                class="message"
+                role="status"
+                aria-live="polite"
+            ></p>
+        </form>
+
+        <!-- Continue with Social Login Options -->
+        <div class="social-divider">
+            <span>or sign up with</span>
+        </div>
+
+        <div class="social-container">
+            <button type="button" class="social-btn" onclick="handleSocialRegister('Google')">
+                <svg class="social-icon" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+                    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.18v3.14C3.15 21.32 7.22 24 12 24z"/>
+                    <path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.5-.38-2.24s.13-1.52.38-2.24V6.62H1.18C.43 8.13 0 9.83 0 12s.43 3.87 1.18 5.38l4.09-3.14z"/>
+                    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.22 0 3.15 2.68 1.18 6.62l4.09 3.14c.95-2.85 3.6-4.96 6.73-4.96z"/>
+                </svg>
+                Google
+            </button>
+
+            <button type="button" class="social-btn" onclick="handleSocialRegister('Facebook')">
+                <svg class="social-icon" viewBox="0 0 24 24" fill="#1877F2">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+                Facebook
+            </button>
+        </div>
+
+        <p class="login-link">
+            Already have an account?
+            <a href="/login.html">Log In</a>
+        </p>
+
+        <p class="home-link">
+            <a href="/">← Back to SoundWave Home</a>
+        </p>
+    </main>
+
+    <script>
+        const form = document.getElementById("registration-form");
+        const password = document.getElementById("password");
+        const confirmPassword = document.getElementById("confirm-password");
+        const message = document.getElementById("registration-message");
+        const button = form.querySelector('button[type="submit"]');
+
+        function handleSocialRegister(provider) {
+            if (provider === 'Google') {
+                const selectedEmail = prompt("Google Sign-Up:\nPlease select or enter the email address you want to use:", "user@gmail.com");
+                
+                if (selectedEmail && selectedEmail.trim() !== "") {
+                    message.style.color = "#66e69a";
+                    message.textContent = `Signed up as ${selectedEmail}. Opening SoundWave...`;
+                    setTimeout(() => {
+                        window.location.href = "/dashboard.html";
+                    }, 1200);
+                } else {
+                    message.style.color = "#ff7777";
+                    message.textContent = "Google sign-up was cancelled.";
+                }
+            } else {
+                message.style.color = "#d8caff";
+                message.textContent = `Connecting with ${provider}... Please wait.`;
+                setTimeout(() => {
+                    window.location.href = "/dashboard.html";
+                }, 1200);
+            }
+        }
+
+        form.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            if (password.value !== confirmPassword.value) {
+                message.style.color = "#ff7777";
+                message.textContent = "Passwords do not match.";
+                confirmPassword.focus();
+                return;
+            }
+
+            if (password.value.length < 8) {
+                message.style.color = "#ff7777";
+                message.textContent = "Your password must contain at least 8 characters.";
+                return;
+            }
+
+            button.disabled = true;
+            button.textContent = "Creating Account...";
+            message.style.color = "#d8caff";
+            message.textContent = "Please wait while we create your account.";
+
+            try {
+                const response = await fetch("/api/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        fullName: document.getElementById("fullname").value.trim(),
+                        email: document.getElementById("email").value.trim(),
+                        password: password.value
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        result.message || "Unable to create your account."
+                    );
+                }
+
+                message.style.color = "#66e69a";
+                message.textContent = result.message || "Account created successfully!";
+
+                form.reset();
+
+                setTimeout(function () {
+                    window.location.href = result.redirect || "/dashboard.html";
+                }, 1200);
+
+            } catch (error) {
+                message.style.color = "#ff7777";
+
+                if (error.message === "Failed to fetch") {
+                    message.textContent = "Cannot connect to the server. Make sure the backend is running.";
+                } else {
+                    message.textContent = error.message;
+                }
+            } finally {
+                button.disabled = false;
+                button.textContent = "Create Account";
+            }
+        });
+    </script>
 </body>
 </html>
