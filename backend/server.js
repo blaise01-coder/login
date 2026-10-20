@@ -1,3 +1,4 @@
+
 const express = require("express");
 const mysql = require("mysql2/promise");
 const bcrypt = require("bcrypt");
@@ -6,46 +7,93 @@ const path = require("path");
 const dotenv = require("dotenv");
 const ytSearch = require("yt-search");
 
-// Load environment variables from backend/.env
+// Load backend/.env locally.
+// On Render, configure these values under Environment Variables.
 dotenv.config({
     path: path.join(__dirname, ".env")
 });
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 const websiteFolder = path.join(__dirname, "..");
+const isProduction = process.env.NODE_ENV === "production";
+
+// Production security configuration
+if (isProduction) {
+    app.set("trust proxy", 1);
+}
+
+// Require a real session secret in production.
+const sessionSecret =
+    process.env.SESSION_SECRET ||
+    (isProduction ? "" : "soundwave-local-development-secret");
+
+if (!sessionSecret) {
+    throw new Error(
+        "SESSION_SECRET must be configured in production."
+    );
+}
+
+// Require Aiven credentials in production.
+// Local development can continue using localhost.
+if (
+    isProduction &&
+    (!process.env.DB_HOST ||
+        !process.env.DB_USER ||
+        !process.env.DB_PASSWORD ||
+        !process.env.DB_NAME)
+) {
+    throw new Error(
+        "Configure DB_HOST, DB_USER, DB_PASSWORD and DB_NAME."
+    );
+}
 
 // Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 
-// Login session
-app.use(
-    session({
-        secret:
-            process.env.SESSION_SECRET ||
-            "soundwave-local-development-secret",
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-            httpOnly: true,
-            sameSite: "lax",
-            secure: false,
-            maxAge: 2 * 60 * 60 * 1000
-        }
-    })
-);
-
-// MySQL connection
-const db = mysql.createPool({
+// MySQL connection pool
+const dbConfig = {
     host: process.env.DB_HOST || "localhost",
     port: Number(process.env.DB_PORT || 3306),
     user: process.env.DB_USER || "root",
     password: process.env.DB_PASSWORD || "",
     database: process.env.DB_NAME || "soundwave_db",
     waitForConnections: true,
-    connectionLimit: 10
-});
+    connectionLimit: 10,
+    queueLimit: 0
+};
+
+// Aiven requires SSL. DB_SSL_CA is optional if the server certificate
+// is trusted by Node.js; otherwise supply Aiven's CA certificate.
+if (isProduction || process.env.DB_SSL === "true") {
+    dbConfig.ssl = {
+        rejectUnauthorized: true,
+        ...(process.env.DB_SSL_CA
+            ? {
+                  ca: process.env.DB_SSL_CA.replace(/\\n/g, "\n")
+              }
+            : {})
+    };
+}
+
+const db = mysql.createPool(dbConfig);
+
+// Login session
+app.use(
+    session({
+        name: "soundwave.sid",
+        secret: sessionSecret,
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: isProduction,
+            maxAge: 2 * 60 * 60 * 1000
+        }
+    })
+);
 
 // Serve existing website files
 app.use(express.static(websiteFolder));
@@ -66,7 +114,7 @@ app.get("/api/db-test", async (req, res) => {
     } catch (error) {
         console.error("Database test error:", error.message);
 
-        return res.status(500).json({
+        return res.status(503).json({
             success: false,
             message: "Database connection failed."
         });
@@ -222,7 +270,10 @@ app.post("/api/login", async (req, res) => {
 
             req.session.save((saveError) => {
                 if (saveError) {
-                    console.error("Session save error:", saveError.message);
+                    console.error(
+                        "Session save error:",
+                        saveError.message
+                    );
 
                     return res.status(500).json({
                         success: false,
@@ -275,7 +326,11 @@ app.post("/api/logout", (req, res) => {
             });
         }
 
-        res.clearCookie("connect.sid");
+        res.clearCookie("soundwave.sid", {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: isProduction
+        });
 
         return res.json({
             success: true,
@@ -284,18 +339,25 @@ app.post("/api/logout", (req, res) => {
     });
 });
 
-// ==========================================
-// YOUTUBE MUSIC SEARCH API (Metadata & Artwork)
-// ==========================================
-
+// YOUTUBE MUSIC SEARCH API (metadata and artwork)
 app.get("/api/youtube/search", async (req, res) => {
     try {
-        const query = typeof req.query.q === "string" ? req.query.q.trim() : "";
+        const query =
+            typeof req.query.q === "string"
+                ? req.query.q.trim()
+                : "";
 
         if (!query) {
             return res.status(400).json({
                 success: false,
                 message: "Please enter a song or artist name."
+            });
+        }
+
+        if (query.length > 200) {
+            return res.status(400).json({
+                success: false,
+                message: "Search query is too long."
             });
         }
 
@@ -306,7 +368,9 @@ app.get("/api/youtube/search", async (req, res) => {
             videoId: item.videoId,
             title: item.title,
             artist: item.author.name,
-            thumbnail: item.thumbnail || `https://i.ytimg.com/vi/${item.videoId}/hqdefault.jpg`,
+            thumbnail:
+                item.thumbnail ||
+                `https://i.ytimg.com/vi/${item.videoId}/hqdefault.jpg`,
             url: item.url
         }));
 
@@ -333,7 +397,24 @@ app.use("/api", (req, res) => {
     });
 });
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`SoundWave server running at http://localhost:${PORT}`);
-});
+// Start server and check the database connection
+async function startServer() {
+    try {
+        await db.query("SELECT 1");
+        console.log("Database connection successful.");
+    } catch (error) {
+        console.error(
+            "Initial database connection failed:",
+            error.message
+        );
+        console.error(
+            "Check your Render environment variables and Aiven SSL settings."
+        );
+    }
+
+    app.listen(PORT, "0.0.0.0", () => {
+        console.log(`SoundWave server listening on port ${PORT}`);
+    });
+}
+
+startServer();
