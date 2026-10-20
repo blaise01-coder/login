@@ -1,12 +1,20 @@
+
 {
-  "name": "backend",
+  "name": "soundwave-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "SoundWave music website backend",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "test": "echo \"No tests configured\""
   },
-  "keywords": [],
+  "keywords": [
+    "soundwave",
+    "music",
+    "youtube",
+    "express",
+    "mysql"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
@@ -20,8 +28,5 @@
     "mysql2": "^3.24.5",
     "yt-search": "^2.13.1",
     "ytdl-core": "^4.11.5"
-  },
-  "allowScripts": {
-    "bcrypt@6.0.0": true
   }
 }
