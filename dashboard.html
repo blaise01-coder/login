@@ -9,7 +9,7 @@
     content="SoundWave helps you discover music, explore artists, save favorites, and play available music through YouTube."
   >
 
-  <title>SoundWave | Discover Music</title>
+  <title>SoundWave | Dynamic Music Dashboard</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -75,20 +75,20 @@
     <!-- MAIN CONTENT -->
     <main class="main-content" id="home">
 
-      <!-- HEADER -->
+      <!-- HEADER (Dynamic Greeting & Location Info) -->
       <header class="topbar">
         <div>
-          <p class="eyebrow">YOUR DAILY SOUNDTRACK</p>
-          <h1>
+          <p class="eyebrow" id="dynamic-eyebrow">YOUR DAILY SOUNDTRACK</p>
+          <h1 id="user-greeting-heading">
             Discover your next
             <span class="gradient-text">favorite.</span>
           </h1>
         </div>
 
         <div class="topbar-actions">
-          <div class="topbar-badge">
+          <div class="topbar-badge" id="location-badge">
             <span class="status-dot" aria-hidden="true"></span>
-            Music discovery
+            <span id="location-text">Loading location...</span>
           </div>
 
           <nav class="auth-links" aria-label="Account navigation">
@@ -168,7 +168,7 @@
         </div>
       </section>
 
-      <!-- DISCOVER MUSIC -->
+      <!-- DISCOVER MUSIC (Trending & Categories Grid) -->
       <section class="content-section" id="featured-section">
         <div class="section-heading">
           <div>
@@ -177,7 +177,7 @@
           </div>
 
           <span class="section-caption" id="results-caption">
-            Search to find songs
+            Search or pick from trending tracks
           </span>
         </div>
 
@@ -356,7 +356,7 @@
         aria-label="Volume">
     </div>
 
-    <!-- YouTube Hidden Iframe Player Engine (Gihishe neza mu buryo budahungabanya isura y'urubuga) -->
+    <!-- YouTube Hidden Iframe Player Engine -->
     <div id="youtube-player" style="position: absolute; width: 0; height: 0; overflow: hidden; opacity: 0; pointer-events: none; z-index: -9999;"></div>
   </section>
 </body>

@@ -1,310 +1,1569 @@
+html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#5145e5">
-    <title>SoundWave | Discover & Stream Your Favorite Music</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: radial-gradient(circle at 15% 15%, #1e1638 0%, #0d0b18 85%);
-            color: #ffffff;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            overflow-x: hidden;
-        }
+  <meta name="theme-color" content="#0b0c14">
+  <meta name="description" content="Discover music, explore artists, find trending songs, and build your personal music library with SoundWave.">
 
-        /* Top Navigation Header */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 24px 6%;
-            background: rgba(13, 11, 24, 0.8);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+  <title>SoundWave | Your Music. Your World.</title>
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 26px;
-            font-weight: 800;
-            color: #ffffff;
-            text-decoration: none;
-        }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-        .brand-icon {
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg, #5145e5, #8a7cfb);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            box-shadow: 0 8px 25px rgba(81, 69, 229, 0.5);
-        }
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-        .brand-accent {
-            color: #8a7cfb;
-        }
+  <style>
+    :root {
+      --bg: #0b0c14;
+      --surface: #141625;
+      --surface-light: #1b1e30;
+      --primary: #6558f5;
+      --primary-light: #9186ff;
+      --pink: #ef4f91;
+      --cyan: #43d9ff;
+      --text: #f8f8ff;
+      --muted: #a2a5bc;
+      --border: rgba(255,255,255,.09);
+      --radius: 22px;
+    }
 
-        .nav-actions {
-            display: flex;
-            gap: 16px;
-            align-items: center;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        .btn-login {
-            padding: 10px 22px;
-            color: #ffffff;
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 95px;
+    }
 
-        .btn-login:hover {
-            border-color: #8a7cfb;
-            background: rgba(138, 124, 251, 0.1);
-        }
+    body {
+      min-width: 320px;
+      overflow-x: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Plus Jakarta Sans", sans-serif;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
 
-        .btn-register {
-            padding: 10px 24px;
-            color: #ffffff;
-            background: linear-gradient(135deg, #5145e5, #7263f3);
-            border-radius: 12px;
-            font-weight: 600;
-            text-decoration: none;
-            box-shadow: 0 4px 20px rgba(81, 69, 229, 0.4);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-        .btn-register:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(81, 69, 229, 0.6);
-        }
+    button {
+      font: inherit;
+    }
 
-        /* Hero Section */
-        .hero {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            padding: 90px 20px 70px 20px;
-            max-width: 950px;
-            margin: 0 auto;
-        }
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid var(--cyan);
+      outline-offset: 4px;
+    }
 
-        .hero-badge {
-            background: rgba(81, 69, 229, 0.15);
-            color: #a39afc;
-            padding: 8px 20px;
-            border-radius: 30px;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 24px;
-            border: 1px solid rgba(81, 69, 229, 0.3);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
+    .container {
+      width: min(1160px, calc(100% - 48px));
+      margin: auto;
+    }
 
-        .hero h1 {
-            font-size: 60px;
-            font-weight: 800;
-            line-height: 1.15;
-            margin-bottom: 22px;
-            letter-spacing: -1.5px;
-        }
+    /* HEADER */
 
-        .hero h1 span {
-            background: linear-gradient(135deg, #8a7cfb, #d4cbff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11,12,20,.88);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
 
-        .hero p {
-            font-size: 19px;
-            color: #b3b0c4;
-            max-width: 620px;
-            margin-bottom: 40px;
-            line-height: 1.6;
-        }
+    .navbar {
+      min-height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 25px;
+    }
 
-        .hero-cta {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
 
-        .btn-get-started {
-            padding: 16px 38px;
-            background: linear-gradient(135deg, #5145e5, #7263f3);
-            color: white;
-            font-size: 16px;
-            font-weight: 700;
-            border-radius: 14px;
-            text-decoration: none;
-            box-shadow: 0 10px 30px rgba(81, 69, 229, 0.5);
-            transition: all 0.3s ease;
-        }
+    .brand-icon {
+      display: grid;
+      place-items: center;
+      width: 43px;
+      height: 43px;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--pink));
+      border-radius: 14px;
+      box-shadow: 0 8px 25px rgba(101,88,245,.3);
+      font-size: 24px;
+    }
 
-        .btn-get-started:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(81, 69, 229, 0.7);
-        }
+    .brand-accent {
+      color: var(--primary-light);
+    }
 
-        .btn-secondary-action {
-            padding: 16px 36px;
-            background: rgba(255, 255, 255, 0.05);
-            color: #ffffff;
-            font-size: 16px;
-            font-weight: 600;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 14px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
 
-        .btn-secondary-action:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: #8a7cfb;
-        }
+    .nav-links a {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+      transition: color .2s ease;
+    }
 
-        /* Features Section */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            max-width: 1100px;
-            margin: 30px auto 80px auto;
-            padding: 0 24px;
-            width: 100%;
-        }
+    .nav-links a:hover {
+      color: white;
+    }
 
-        .feature-box {
-            background: rgba(24, 21, 40, 0.65);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            padding: 34px;
-            border-radius: 20px;
-            backdrop-filter: blur(12px);
-            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-        }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-        .feature-box:hover {
-            transform: translateY(-6px);
-            border-color: rgba(138, 124, 251, 0.4);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-        }
+    .btn {
+      min-height: 43px;
+      padding: 11px 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 750;
+      transition: transform .2s ease, background .2s ease, border-color .2s ease;
+      cursor: pointer;
+    }
 
-        .feature-icon {
-            font-size: 34px;
-            margin-bottom: 16px;
-        }
+    .btn:hover {
+      transform: translateY(-2px);
+    }
 
-        .feature-box h3 {
-            font-size: 20px;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
+    .btn-outline {
+      border-color: var(--border);
+      background: rgba(255,255,255,.035);
+    }
 
-        .feature-box p {
-            color: #9e9ab8;
-            font-size: 15px;
-            line-height: 1.5;
-            margin: 0;
-        }
+    .btn-outline:hover {
+      border-color: var(--primary-light);
+      background: rgba(101,88,245,.1);
+    }
 
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-            color: #8a85a3;
-            font-size: 14px;
-            background: rgba(13, 11, 24, 0.6);
-        }
+    .btn-primary {
+      color: white;
+      background: linear-gradient(135deg, var(--primary), #8575ff);
+      box-shadow: 0 8px 25px rgba(101,88,245,.23);
+    }
 
-        @media(max-width: 768px) {
-            .hero h1 { font-size: 38px; }
-            header { padding: 18px 20px; }
-        }
-    </style>
+    .btn-primary:hover {
+      box-shadow: 0 12px 32px rgba(101,88,245,.35);
+    }
+
+    /* HERO */
+
+    .hero {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      padding: 100px 0 90px;
+      background:
+        radial-gradient(ellipse at 10% 5%, rgba(101,88,245,.18), transparent 42%),
+        radial-gradient(ellipse at 92% 50%, rgba(239,79,145,.1), transparent 36%);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      align-items: center;
+      gap: 55px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 23px;
+      padding: 8px 13px;
+      color: #c3bcff;
+      background: rgba(101,88,245,.12);
+      border: 1px solid rgba(145,134,255,.23);
+      border-radius: 30px;
+      font-size: 11px;
+      font-weight: 750;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      background: #65e9b6;
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(101,233,182,.6);
+    }
+
+    .hero h1 {
+      max-width: 670px;
+      margin-bottom: 23px;
+      font-size: clamp(42px, 5.5vw, 70px);
+      line-height: 1.08;
+      font-weight: 800;
+      letter-spacing: -3.2px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(100deg, #a79bff, #f2a3db 75%, #fff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-description {
+      max-width: 530px;
+      margin-bottom: 30px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.9;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .hero-actions .btn {
+      min-height: 51px;
+      padding: 14px 23px;
+      font-size: 13px;
+    }
+
+    .hero-note {
+      margin-top: 20px;
+      color: #777d98;
+      font-size: 11px;
+    }
+
+    /* MUSIC VISUAL */
+
+    .music-visual {
+      position: relative;
+      min-height: 440px;
+      display: grid;
+      place-items: center;
+    }
+
+    .visual-glow {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: rgba(101,88,245,.2);
+      filter: blur(85px);
+      border-radius: 50%;
+    }
+
+    .album-stack {
+      position: relative;
+      width: 330px;
+      height: 350px;
+    }
+
+    .album {
+      position: absolute;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      width: 235px;
+      height: 280px;
+      border: 1px solid rgba(255,255,255,.17);
+      border-radius: 24px;
+      box-shadow: 0 28px 65px rgba(0,0,0,.35);
+    }
+
+    .album-back {
+      top: 24px;
+      right: 0;
+      transform: rotate(12deg);
+      background: linear-gradient(145deg, #ef4f91, #512c83 65%, #1b1c38);
+    }
+
+    .album-front {
+      top: 42px;
+      left: 0;
+      z-index: 2;
+      transform: rotate(-8deg);
+      background:
+        radial-gradient(circle at 50% 40%, rgba(255,255,255,.17), transparent 25%),
+        linear-gradient(145deg, #25215b, #6558f5 55%, #161728);
+    }
+
+    .album-circle {
+      display: grid;
+      place-items: center;
+      width: 155px;
+      height: 155px;
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 50%;
+      background:
+        repeating-radial-gradient(circle, rgba(255,255,255,.1) 0 2px, transparent 3px 8px),
+        rgba(10,10,20,.35);
+      font-size: 65px;
+    }
+
+    .album-caption {
+      position: absolute;
+      bottom: 22px;
+      left: 20px;
+      right: 20px;
+    }
+
+    .album-caption strong {
+      display: block;
+      font-size: 15px;
+    }
+
+    .album-caption span {
+      color: #dedbff;
+      font-size: 11px;
+    }
+
+    .floating-card {
+      position: absolute;
+      z-index: 4;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 13px 16px;
+      background: rgba(23,24,42,.9);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      box-shadow: 0 15px 45px rgba(0,0,0,.3);
+      backdrop-filter: blur(15px);
+    }
+
+    .floating-card.top {
+      top: 32px;
+      right: -5px;
+    }
+
+    .floating-card.bottom {
+      bottom: 24px;
+      left: -22px;
+    }
+
+    .floating-icon {
+      display: grid;
+      place-items: center;
+      width: 39px;
+      height: 39px;
+      background: rgba(101,88,245,.18);
+      border-radius: 11px;
+      font-size: 19px;
+    }
+
+    .floating-card strong {
+      display: block;
+      font-size: 11px;
+    }
+
+    .floating-card small {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    /* TRUST STRIP */
+
+    .trust-strip {
+      padding: 23px 0;
+      background: rgba(255,255,255,.018);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .trust-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 16px 36px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .trust-content strong {
+      color: #e4e2ff;
+    }
+
+    /* GENERAL SECTIONS */
+
+    .section {
+      padding: 90px 0;
+    }
+
+    .section-heading {
+      max-width: 670px;
+      margin: 0 auto 45px;
+      text-align: center;
+    }
+
+    .section-label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--primary-light);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .section-heading h2 {
+      margin-bottom: 13px;
+      font-size: clamp(29px, 4vw, 43px);
+      line-height: 1.2;
+      letter-spacing: -1.5px;
+    }
+
+    .section-heading p {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* DISCOVERY PREVIEW */
+
+    .discovery {
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(101,88,245,.07), transparent 55%);
+    }
+
+    .discovery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 19px;
+    }
+
+    .discovery-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 260px;
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      transition: transform .25s ease, border-color .25s ease;
+    }
+
+    .discovery-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(145,134,255,.5);
+    }
+
+    .discovery-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, rgba(8,9,17,.97), transparent 95%);
+    }
+
+    .discovery-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .discovery-card.one {
+      background: radial-gradient(circle at 70% 20%, #d55e91, #462b69 48%, #171729);
+    }
+
+    .discovery-card.two {
+      background: radial-gradient(circle at 70% 20%, #42b5c5, #26447c 48%, #171729);
+    }
+
+    .discovery-card.three {
+      background: radial-gradient(circle at 70% 20%, #f1a85b, #7d405f 48%, #171729);
+    }
+
+    .discovery-symbol {
+      position: absolute;
+      top: 27px;
+      right: 28px;
+      font-size: 67px;
+      opacity: .85;
+      filter: drop-shadow(0 12px 25px rgba(0,0,0,.2));
+    }
+
+    .mini-label {
+      width: fit-content;
+      margin-bottom: 11px;
+      padding: 5px 9px;
+      background: rgba(255,255,255,.13);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 20px;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .discovery-card h3 {
+      margin-bottom: 5px;
+      font-size: 21px;
+    }
+
+    .discovery-card p {
+      color: #d0cfe0;
+      font-size: 11px;
+    }
+
+    /* FEATURES */
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .feature-card {
+      padding: 28px;
+      background: linear-gradient(145deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: transform .25s ease, border-color .25s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(145,134,255,.4);
+    }
+
+    .feature-icon {
+      display: grid;
+      place-items: center;
+      width: 51px;
+      height: 51px;
+      margin-bottom: 22px;
+      background: rgba(101,88,245,.15);
+      border: 1px solid rgba(145,134,255,.18);
+      border-radius: 15px;
+      font-size: 24px;
+    }
+
+    .feature-card h3 {
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    .feature-card p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.9;
+    }
+
+    /* PERSONALIZATION */
+
+    .personalization {
+      padding: 0 0 90px;
+    }
+
+    .personal-panel {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 40px;
+      padding: 48px;
+      background:
+        radial-gradient(circle at 90% 0%, rgba(101,88,245,.25), transparent 45%),
+        linear-gradient(130deg, #19192d, #151626);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+    }
+
+    .personal-panel h2 {
+      margin-bottom: 15px;
+      font-size: clamp(27px, 3.5vw, 38px);
+      line-height: 1.2;
+      letter-spacing: -1px;
+    }
+
+    .personal-panel p {
+      margin-bottom: 23px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .personal-list {
+      display: grid;
+      gap: 13px;
+      margin-bottom: 25px;
+    }
+
+    .personal-list li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #dcdbea;
+      font-size: 12px;
+    }
+
+    .check {
+      display: grid;
+      place-items: center;
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      color: #8ff0c2;
+      background: rgba(75,220,160,.1);
+      border-radius: 50%;
+    }
+
+    .preference-preview {
+      display: grid;
+      gap: 13px;
+      padding: 23px;
+      background: rgba(10,11,20,.65);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 20px;
+    }
+
+    .preview-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .preview-top strong {
+      font-size: 13px;
+    }
+
+    .preview-badge {
+      padding: 5px 9px;
+      color: #b9afff;
+      background: rgba(101,88,245,.15);
+      border-radius: 20px;
+      font-size: 9px;
+    }
+
+    .preview-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: rgba(255,255,255,.035);
+      border: 1px solid rgba(255,255,255,.04);
+      border-radius: 12px;
+    }
+
+    .preview-row .emoji {
+      display: grid;
+      place-items: center;
+      width: 39px;
+      height: 39px;
+      flex-shrink: 0;
+      background: rgba(101,88,245,.16);
+      border-radius: 11px;
+      font-size: 18px;
+    }
+
+    .preview-row strong {
+      display: block;
+      font-size: 11px;
+    }
+
+    .preview-row small {
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    /* HOW IT WORKS */
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 28px;
+    }
+
+    .step {
+      position: relative;
+      padding: 27px;
+      border-top: 1px solid rgba(145,134,255,.3);
+      background: rgba(255,255,255,.02);
+      border-radius: 0 0 17px 17px;
+    }
+
+    .step-number {
+      display: grid;
+      place-items: center;
+      width: 41px;
+      height: 41px;
+      margin-bottom: 19px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--primary), #9285ff);
+      border-radius: 13px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .step h3 {
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    .step p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.9;
+    }
+
+    /* PLATFORM STRIP */
+
+    .platforms {
+      padding: 45px 0;
+      background: rgba(255,255,255,.02);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .platforms-title {
+      margin-bottom: 25px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .platform-list {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 18px 55px;
+    }
+
+    .platform-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: #d4d4e3;
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .platform-item span {
+      font-size: 19px;
+    }
+
+    /* FINAL CALL TO ACTION */
+
+    .final-cta {
+      padding: 90px 0;
+      text-align: center;
+    }
+
+    .cta-box {
+      padding: 60px 25px;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(145,134,255,.25), transparent 60%),
+        var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+    }
+
+    .cta-box h2 {
+      margin-bottom: 13px;
+      font-size: clamp(29px, 4vw, 44px);
+      letter-spacing: -1.5px;
+      line-height: 1.2;
+    }
+
+    .cta-box p {
+      max-width: 570px;
+      margin: 0 auto 25px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* FOOTER */
+
+    .footer {
+      padding: 29px 0;
+      background: #090a11;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .footer-brand {
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .footer p {
+      color: #83869d;
+      font-size: 11px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .footer-links a:hover {
+      color: white;
+    }
+
+    /* RESPONSIVE DESIGN */
+
+    @media (min-width: 1500px) {
+      .hero {
+        padding-top: 120px;
+        padding-bottom: 110px;
+      }
+    }
+
+    @media (max-width: 1000px) {
+      .nav-links {
+        gap: 16px;
+      }
+
+      .hero-grid {
+        gap: 25px;
+      }
+
+      .hero h1 {
+        font-size: 53px;
+      }
+
+      .music-visual {
+        transform: scale(.9);
+      }
+
+      .features-grid,
+      .discovery-grid {
+        gap: 13px;
+      }
+
+      .personal-panel {
+        padding: 34px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .container {
+        width: min(100% - 32px, 560px);
+      }
+
+      .navbar {
+        min-height: 72px;
+      }
+
+      .brand {
+        font-size: 21px;
+      }
+
+      .brand-icon {
+        width: 38px;
+        height: 38px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .nav-actions {
+        gap: 7px;
+      }
+
+      .nav-actions .btn {
+        min-height: 38px;
+        padding: 9px 12px;
+        font-size: 11px;
+      }
+
+      .hero {
+        padding: 66px 0 45px;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .hero-copy {
+        text-align: center;
+      }
+
+      .eyebrow {
+        margin-bottom: 19px;
+        font-size: 10px;
+      }
+
+      .hero h1 {
+        font-size: clamp(39px, 10vw, 57px);
+        letter-spacing: -2px;
+      }
+
+      .hero-description {
+        margin-right: auto;
+        margin-left: auto;
+        font-size: 13px;
+      }
+
+      .hero-actions {
+        justify-content: center;
+      }
+
+      .hero-actions .btn {
+        min-height: 47px;
+        padding: 12px 16px;
+        font-size: 11px;
+      }
+
+      .music-visual {
+        min-height: 355px;
+        transform: scale(.9);
+      }
+
+      .floating-card.top {
+        right: -5px;
+      }
+
+      .floating-card.bottom {
+        left: -5px;
+      }
+
+      .section {
+        padding: 65px 0;
+      }
+
+      .section-heading {
+        margin-bottom: 28px;
+      }
+
+      .discovery-grid,
+      .features-grid,
+      .steps-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .discovery-card {
+        min-height: 220px;
+      }
+
+      .feature-card {
+        padding: 23px;
+      }
+
+      .personalization {
+        padding-bottom: 65px;
+      }
+
+      .personal-panel {
+        grid-template-columns: 1fr;
+        gap: 25px;
+        padding: 25px 20px;
+      }
+
+      .personal-panel h2 {
+        font-size: 29px;
+      }
+
+      .platform-list {
+        gap: 19px 25px;
+      }
+
+      .platform-item {
+        font-size: 11px;
+      }
+
+      .final-cta {
+        padding: 65px 0;
+      }
+
+      .cta-box {
+        padding: 40px 20px;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .footer-links {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .container {
+        width: calc(100% - 24px);
+      }
+
+      .brand {
+        gap: 7px;
+        font-size: 18px;
+      }
+
+      .brand-icon {
+        width: 34px;
+        height: 34px;
+        font-size: 20px;
+      }
+
+      .nav-actions .btn {
+        padding: 8px 9px;
+      }
+
+      .hero h1 {
+        font-size: 37px;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+      }
+
+      .hero-actions .btn {
+        width: 100%;
+      }
+
+      .music-visual {
+        margin: -10px -15px;
+        transform: scale(.78);
+      }
+
+      .trust-content {
+        gap: 12px 19px;
+        font-size: 10px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-    <!-- TOP HEADER -->
-    <header>
-        <a class="brand" href="index.html">
-            <span class="brand-icon">♫</span>
-            <span>Sound<span class="brand-accent">Wave</span></span>
-        </a>
-        <div class="nav-actions">
-            <a href="login.html" class="btn-login">Login</a>
-            <a href="registration.html" class="btn-register">Register</a>
+  <!-- HEADER -->
+  <header class="header">
+    <div class="container navbar">
+
+      <a class="brand" href="index.html" aria-label="SoundWave homepage">
+        <span class="brand-icon" aria-hidden="true">♫</span>
+        <span>Sound<span class="brand-accent">Wave</span></span>
+      </a>
+
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="#discover">Discover</a>
+        <a href="#features">Features</a>
+        <a href="#personalization">Personalization</a>
+        <a href="#how-it-works">How it works</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="login.html" class="btn btn-outline">Log in</a>
+        <a href="registration.html" class="btn btn-primary">Get started <span>→</span></a>
+      </div>
+
+    </div>
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container hero-grid">
+
+        <div class="hero-copy">
+
+          <div class="eyebrow">
+            <span class="status-dot"></span>
+            YOUR MUSIC. YOUR WORLD.
+          </div>
+
+          <h1>
+            Feel every beat.
+            <span class="gradient-text">Find your sound.</span>
+          </h1>
+
+          <p class="hero-description">
+            Discover music that matches your mood, explore artists from
+            around the world, and build a personal library of the songs
+            you love — all from one beautiful music experience.
+          </p>
+
+          <div class="hero-actions">
+            <a href="registration.html" class="btn btn-primary">
+              Create your free account <span>→</span>
+            </a>
+
+            <a href="dashboard.html" class="btn btn-outline">
+              Explore SoundWave ♫
+            </a>
+          </div>
+
+          <p class="hero-note">
+            Your music journey starts here. Sign in to save your favorites.
+          </p>
+
         </div>
-    </header>
 
-    <!-- HERO MAIN CONTENT -->
-    <main>
-        <section class="hero">
-            <div class="hero-badge">
-                <span>✨ Welcome to SoundWave Experience</span>
-            </div>
-            <h1>Feel the rhythm that <span>moves your soul.</span></h1>
-            <p>Join SoundWave today to discover millions of songs, build your personal favorite library, and stream high-quality music seamlessly.</p>
-            
-            <div class="hero-cta">
-                <a href="registration.html" class="btn-get-started">Create Free Account →</a>
-                <a href="login.html" class="btn-secondary-action">Sign In to Dashboard</a>
-            </div>
-        </section>
+        <!-- CSS-BASED MUSIC ART -->
+        <div class="music-visual" aria-label="SoundWave music artwork">
+          <div class="visual-glow"></div>
 
-        <!-- CORE FEATURES -->
-        <section class="features">
-            <div class="feature-box">
-                <div class="feature-icon">🎧</div>
-                <h3>Unlimited Music</h3>
-                <p>Search and stream any song, artist, or trending track from across the globe instantly.</p>
-            </div>
-            <div class="feature-box">
-                <div class="feature-icon">❤️</div>
-                <h3>Personal Library</h3>
-                <p>Save your favorite tracks securely in your account and access them anytime you want.</p>
-            </div>
-            <div class="feature-box">
-                <div class="feature-icon">🚀</div>
-                <h3>Sleek & Fast UI</h3>
-                <p>Enjoy a responsive, minimalist, and powerful music player built for true music lovers.</p>
-            </div>
-        </section>
-    </main>
+          <div class="album-stack">
 
-    <!-- FOOTER -->
-    <footer>
-        <p>© 2026 SoundWave. Crafted with passion for music lovers ♡</p>
-    </footer>
+            <div class="album album-back">
+              <div class="album-circle">♫</div>
+              <div class="album-caption">
+                <strong>Feel the Rhythm</strong>
+                <span>Discover something new</span>
+              </div>
+            </div>
+
+            <div class="album album-front">
+              <div class="album-circle">♪</div>
+              <div class="album-caption">
+                <strong>Your Daily Soundtrack</strong>
+                <span>Made for your moments</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="floating-card top">
+            <div class="floating-icon">🎧</div>
+            <div>
+              <strong>Music discovery</strong>
+              <small>Find your next favorite</small>
+            </div>
+          </div>
+
+          <div class="floating-card bottom">
+            <div class="floating-icon">❤️</div>
+            <div>
+              <strong>Your personal library</strong>
+              <small>Keep the songs you love</small>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- VALUE STRIP -->
+    <section class="trust-strip" aria-label="SoundWave features">
+      <div class="container trust-content">
+        <span>♫ <strong>Music discovery</strong></span>
+        <span>♡ <strong>Personal favorites</strong></span>
+        <span>◷ <strong>Daily recommendations</strong></span>
+        <span>◎ <strong>Cross-device design</strong></span>
+      </div>
+    </section>
+
+    <!-- DISCOVERY -->
+    <section class="section discovery" id="discover">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="section-label">Explore your sound</span>
+          <h2>There's a world of music waiting.</h2>
+          <p>
+            Explore different moods and music styles, then open your
+            dashboard to search for artists and tracks.
+          </p>
+        </div>
+
+        <div class="discovery-grid">
+
+          <a href="dashboard.html" class="discovery-card one">
+            <span class="discovery-symbol" aria-hidden="true">♫</span>
+            <span class="mini-label">01 / Discover</span>
+            <h3>New discoveries</h3>
+            <p>Explore artists and music you haven't heard before.</p>
+          </a>
+
+          <a href="dashboard.html" class="discovery-card two">
+            <span class="discovery-symbol" aria-hidden="true">◉</span>
+            <span class="mini-label">02 / Your mood</span>
+            <h3>Find your vibe</h3>
+            <p>Search for songs to match your moment and mood.</p>
+          </a>
+
+          <a href="dashboard.html#library-section" class="discovery-card three">
+            <span class="discovery-symbol" aria-hidden="true">♥</span>
+            <span class="mini-label">03 / Your collection</span>
+            <h3>Made personal</h3>
+            <p>Build a library around the music that matters to you.</p>
+          </a>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="section" id="features">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="section-label">Designed for music lovers</span>
+          <h2>Everything starts with your sound.</h2>
+          <p>
+            Useful music tools, a clean interface, and a personal
+            experience designed to grow with your listening habits.
+          </p>
+        </div>
+
+        <div class="features-grid">
+
+          <article class="feature-card">
+            <div class="feature-icon">🔎</div>
+            <h3>Search and discover</h3>
+            <p>
+              Search for songs and artists and explore available
+              music results through supported music sources.
+            </p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">❤️</div>
+            <h3>Your personal library</h3>
+            <p>
+              Keep track of your favorite discoveries and return
+              to the music you enjoy.
+            </p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">✨</div>
+            <h3>Personalized experience</h3>
+            <p>
+              Customize your music preferences and explore suggestions
+              that reflect your choices.
+            </p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">🌍</div>
+            <h3>Discover worldwide</h3>
+            <p>
+              Explore artists, genres, and music from different
+              places and cultures.
+            </p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h3>Works across screen sizes</h3>
+            <p>
+              Enjoy a responsive interface designed for desktop,
+              laptop, tablet, and mobile screens.
+            </p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">🔗</div>
+            <h3>Music platform links</h3>
+            <p>
+              Continue exploring through supported services such as
+              YouTube, Spotify, and other music platforms.
+            </p>
+          </article>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PERSONALIZATION -->
+    <section class="personalization" id="personalization">
+      <div class="container">
+
+        <div class="personal-panel">
+
+          <div>
+            <span class="section-label">A more personal experience</span>
+
+            <h2>Your day. Your mood. Your music.</h2>
+
+            <p>
+              SoundWave is designed to support a more personal
+              discovery experience. Your dashboard can use your
+              selected preferences, local time, and — only if you
+              allow it — your approximate location.
+            </p>
+
+            <ul class="personal-list">
+              <li>
+                <span class="check">✓</span>
+                Welcome messages based on the time of day
+              </li>
+              <li>
+                <span class="check">✓</span>
+                Music preferences you can choose
+              </li>
+              <li>
+                <span class="check">✓</span>
+                Location access requested with your permission
+              </li>
+              <li>
+                <span class="check">✓</span>
+                A personal library for your favorite tracks
+              </li>
+            </ul>
+
+            <a href="registration.html" class="btn btn-primary">
+              Start your journey →
+            </a>
+          </div>
+
+          <div class="preference-preview">
+
+            <div class="preview-top">
+              <strong>Your SoundWave experience</strong>
+              <span class="preview-badge">PREVIEW</span>
+            </div>
+
+            <div class="preview-row">
+              <div class="emoji">☀️</div>
+              <div>
+                <strong>A greeting for your day</strong>
+                <small>Uses your device's local time</small>
+              </div>
+            </div>
+
+            <div class="preview-row">
+              <div class="emoji">🎵</div>
+              <div>
+                <strong>Your music preferences</strong>
+                <small>Choose genres and artists you enjoy</small>
+              </div>
+            </div>
+
+            <div class="preview-row">
+              <div class="emoji">📍</div>
+              <div>
+                <strong>Optional location context</strong>
+                <small>Only after you grant browser permission</small>
+              </div>
+            </div>
+
+            <div class="preview-row">
+              <div class="emoji">❤️</div>
+              <div>
+                <strong>Your favorites</strong>
+                <small>Return to songs you have saved</small>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="section" id="how-it-works">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="section-label">Simple by design</span>
+          <h2>Your music journey in three steps.</h2>
+          <p>
+            Get started, discover music, and build a collection
+            that feels like yours.
+          </p>
+        </div>
+
+        <div class="steps-grid">
+
+          <article class="step">
+            <div class="step-number">01</div>
+            <h3>Create your account</h3>
+            <p>
+              Register and sign in to access the personalized
+              features associated with your account.
+            </p>
+          </article>
+
+          <article class="step">
+            <div class="step-number">02</div>
+            <h3>Explore your music</h3>
+            <p>
+              Search for artists, discover tracks, and explore
+              music available from supported providers.
+            </p>
+          </article>
+
+          <article class="step">
+            <div class="step-number">03</div>
+            <h3>Make it yours</h3>
+            <p>
+              Save your favorites and customize your preferences
+              for a more personal experience.
+            </p>
+          </article>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- MUSIC PLATFORMS -->
+    <section class="platforms" id="platforms">
+      <div class="container">
+
+        <p class="platforms-title">
+          Continue exploring your favorite music platforms
+        </p>
+
+        <div class="platform-list">
+          <a class="platform-item"
+             href="https://www.youtube.com/"
+             target="_blank"
+             rel="noopener noreferrer">
+            <span>▶</span> YouTube
+          </a>
+
+          <a class="platform-item"
+             href="https://open.spotify.com/"
+             target="_blank"
+             rel="noopener noreferrer">
+            <span>●</span> Spotify
+          </a>
+
+          <a class="platform-item"
+             href="https://music.youtube.com/"
+             target="_blank"
+             rel="noopener noreferrer">
+            <span>♫</span> YouTube Music
+          </a>
+
+          <a class="platform-item"
+             href="https://music.apple.com/"
+             target="_blank"
+             rel="noopener noreferrer">
+            <span>♪</span> Apple Music
+          </a>
+
+          <a class="platform-item"
+             href="https://soundcloud.com/"
+             target="_blank"
+             rel="noopener noreferrer">
+            <span>☁</span> SoundCloud
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="final-cta">
+      <div class="container">
+
+        <div class="cta-box">
+          <span class="section-label">Your next favorite is waiting</span>
+
+          <h2>Ready to find your sound?</h2>
+
+          <p>
+            Create your SoundWave account and start exploring music,
+            building your library, and shaping your own experience.
+          </p>
+
+          <a href="registration.html" class="btn btn-primary">
+            Create your free account →
+          </a>
+
+          <p style="margin-top:17px;margin-bottom:0;font-size:11px">
+            Already have an account?
+            <a href="login.html" style="color:#b8aeff;font-weight:750">
+              Sign in here
+            </a>
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-content">
+
+      <a class="footer-brand" href="index.html">
+        Sound<span class="brand-accent">Wave</span> ♫
+      </a>
+
+      <p>
+        © <span id="current-year">2026</span> SoundWave.
+        Made for music lovers.
+      </p>
+
+      <div class="footer-links">
+        <a href="dashboard.html">Explore music</a>
+        <a href="login.html">Log in</a>
+        <a href="registration.html">Register</a>
+      </div>
+
+    </div>
+  </footer>
+
+  <script>
+    // Keep the footer year current.
+    document.getElementById("current-year").textContent =
+      new Date().getFullYear();
+  </script>
 
 </body>
 </html>
